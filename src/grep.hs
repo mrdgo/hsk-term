@@ -18,17 +18,16 @@ prefix (x:xs) (y:ys)
     | x == y = prefix xs ys
     | otherwise = False
 
-grep :: Pattern -> FilePath -> IO ()
-grep p f =
-    readFile f >>= \text ->
-        sequence_ . map putStrLn $ filter (matchLine p) (lines text)
+grep :: Pattern -> [String] -> [String]
+grep pattern text = filter (matchLine pattern) text
 
 main =
     getArgs >>=
         \ args ->
-                if (length args) == 2 then
-                    grep (head args) (last args)
-                else
-                    print "Parse failed."
+            if (length args) == 2 then
+                readFile (last args) >>= \text ->
+                    sequence_ . map putStrLn $ grep (head args)  (lines text)
+            else
+                putStrLn "Parse failed."
 
 
